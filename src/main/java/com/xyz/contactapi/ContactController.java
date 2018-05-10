@@ -1,14 +1,15 @@
 package com.xyz.contactapi;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,35 +43,25 @@ public class ContactController {
     @GetMapping(value = "/contact/{id}")
     public ResponseEntity<?> getContact(@PathVariable(name = "id") Long id)  {
     	logger.info("id - "+id);
-        Optional<Contact> contact = repository.findById(id);
-        /*if(true) {
-        	throw new NameAlreadyBoundException();
-        }*/
         
-        logger.info(repository.findByEmail("abc@gmail.com").getName());
-        if(!contact.isPresent()) {
-        	System.out.println("No contact found with id - "+id);
-        	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	Contact contact = service.getContactById(id);
+        
+        if(contact == null) {
+        	logger.info("No contact found with id - "+id);
+        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<ContactDTO>(modelMapper.map(contact.get(), ContactDTO.class),HttpStatus.OK);
+        return new ResponseEntity<ContactDTO>(modelMapper.map(contact, ContactDTO.class),HttpStatus.OK);
     }
     
     @GetMapping(value = "/contact")
-    public ResponseEntity<?> contactByParams(@RequestParam(name = "emailid",required=false) String emailId,
-    		@RequestParam(name = "phoneNumber",required=false) String phoneNumber) {
-    	logger.info("EmailId - "+emailId);
+    public ResponseEntity<?> contactByParams(HttpServletRequest req) {
+    	
     	Contact contact = null;
-    	if(emailId == null && phoneNumber == null) {
-    		
-    	}
-    	if(emailId != null) {
-        	contact = repository.findByEmail(emailId);
-    	} else if(phoneNumber != null) {
-    		contact = repository.findByPhoneNumber(phoneNumber);
-    	}
-        
+    	T t= service.processFilters(req);
+    	
+    	
         if(contact == null) {
-        	System.out.println("No contact found emailId - "+emailId);
+        	System.out.println("No contact found");
         	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<ContactDTO>(modelMapper.map(contact, ContactDTO.class),HttpStatus.OK);
@@ -92,8 +83,9 @@ public class ContactController {
 
     @PostMapping(value ="/contact")
     public ResponseEntity<?> addContact(@RequestBody ContactDTO contactDTO) {
-        System.out.println(contactDTO);
-        Contact contact = repository.save(modelMapper.map(contactDTO, Contact.class));
+        logger.info(contactDTO);
+        Contact contact = service.saveContact(contactDTO);
+
         if(contact == null) {
         	System.out.println("No contact found");
         	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -104,40 +96,28 @@ public class ContactController {
     @PutMapping(value ="/contact/{id}")
     public ResponseEntity<?> updateContact(@PathVariable(name = "id") Long id, @RequestBody ContactDTO contactDTO) {
     	Contact updatedContact = null;
-    	System.out.println("id -"+id);
+    	logger.info("id -"+id);
         
-        
-        Optional<Contact> contact = repository.findById(id);
-        
-        if(!contact.isPresent()) {
-        	System.out.println("No contact found with id - "+id);
-        	updatedContact = repository.save(modelMapper.map(contactDTO, Contact.class));
-        } else {
-        	updatedContact = repository.save(modelMapper.map(contactDTO, Contact.class));
+    	updatedContact = service.updateContact(id,contactDTO);
+    	
+    	if(updatedContact == null) {
+        	System.out.println("No contact found");
+        	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
-        
-        return new ResponseEntity<ContactDTO>(modelMapper.map(contact, ContactDTO.class),HttpStatus.OK);
+        return new ResponseEntity<ContactDTO>(modelMapper.map(updatedContact, ContactDTO.class),HttpStatus.OK);
     }
     
     @DeleteMapping(value ="/contact/{id}")
     public ResponseEntity<?> deleteContact(@PathVariable(name = "id") Long id) {
     	logger.info("id - "+id);
-        Optional<Contact> contact = repository.findById(id);
-        
-        if(!contact.isPresent()) {
-        	System.out.println("No contact found with id - "+id);
-        	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-        	repository.delete(contact.get());
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return service.deleteContact(id) ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
+    
     
     /*Condition<?, ?> isNotZero = new Condition<ContactDTO, Contact>() {
         public boolean applies(MappingContext<ContactDTO, Contact> context) {

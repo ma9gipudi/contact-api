@@ -1,6 +1,7 @@
 package com.xyz.contactapi.dto.entity;
 
 import java.io.Serializable;
+import java.sql.Clob;
 import java.sql.Date;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -48,9 +50,8 @@ public class Contact  implements Serializable{
     @Column
     private String company;
     
-/*    @Column
-    private Clob image;
-*/    
+   /* @Column
+    private Clob image;*/    
     
     @Column
     private Date birthdate;
@@ -59,7 +60,7 @@ public class Contact  implements Serializable{
     @JoinColumn(name = "phone_Id" )
     private PhoneNumber phone;
     
-    @OneToOne (cascade = CascadeType.ALL)
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "address_Id")
     private Address address;
 

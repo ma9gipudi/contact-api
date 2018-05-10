@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS contact (
   company varchar(100) ,
   image blob,
   email varchar(50),
-  birthdate DATE,
+  birthdate Timestamp,
   phone_Id int,
   address_Id int,
   PRIMARY KEY (id)

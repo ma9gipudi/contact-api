@@ -1,4 +1,5 @@
 package com.xyz.contactapi.dto;
+import java.sql.Clob;
 import java.sql.Date;
 
 import com.xyz.contactapi.dto.entity.Address;
@@ -26,7 +27,7 @@ public class ContactDTO {
     
     private String company;
     
-    /*private Clob image;*/
+   /* private Clob image;*/
     
     private String email;
     
