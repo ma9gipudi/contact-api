@@ -7,13 +7,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "phoneNumber")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PhoneNumber {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

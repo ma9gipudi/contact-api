@@ -44,6 +44,11 @@ public class ContactController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping(value = "/getContactBy")
+    public List<ContactDTO> getContactBy(@RequestParam(defaultValue = "") String email, @RequestParam(defaultValue = "") String phone) {
+        return service.getContactBy(email, phone);
+    }
+
 
     @PostMapping(value = "/contact")
     public ResponseEntity<?> addContact(@RequestBody ContactDTO contactDTO) {

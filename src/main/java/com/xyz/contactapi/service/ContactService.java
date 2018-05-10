@@ -9,14 +9,10 @@ import com.xyz.contactapi.entity.Contact;
 
 public interface ContactService {
 
-	public List<Contact> processFilters(HttpServletRequest req);
-
-	public Contact getContactById(Long id);
-
-	public Contact saveContact(ContactDTO contactDTO);
-
-	public Contact updateContact(Long id, ContactDTO contactDTO);
-
-	public Boolean deleteContact(Long id);
-
+    List<Contact> processFilters(HttpServletRequest req);
+    Contact getContactById(Long id);
+    Contact saveContact(ContactDTO contactDTO);
+    Contact updateContact(Long id, ContactDTO contactDTO);
+    Boolean deleteContact(Long id);
+    List<ContactDTO> getContactBy(String email, String phone);
 }

@@ -3,6 +3,7 @@ package com.xyz.contactapi.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,7 +51,7 @@ public class ContactServiceImpl implements ContactService {
 			contact = repository.findByEmail(req.getParameter(param).toLowerCase().trim());
 			contactLst.add(contact);
 		} else if (param.equals("phoneNumber")) {
-			contact = repository.findByPhoneNumber(req.getParameter(param).toLowerCase().trim());
+			contact = repository.findByPhonenumber(req.getParameter(param).toLowerCase().trim());
 			contactLst.add(contact);
 		} else if (param.equals("city") || param.equals("state")) {
 			contactLst = repository.findByCityOrState(req.getParameter(param).toLowerCase().trim());
@@ -100,4 +101,13 @@ public class ContactServiceImpl implements ContactService {
 		return true;
 	}
 
+	@Override
+	public List<ContactDTO> getContactBy(String email, String phone) {
+        return List.of(Optional.ofNullable(repository.findByEmail(email))
+                .orElse(Contact.builder().build()), Optional.ofNullable(repository.findByPhonenumber(phone))
+                .orElse(Contact.builder().build())).stream()
+                .filter(e -> e.getId() != null)
+                .map(e -> modelMapper.map(e, ContactDTO.class))
+                .collect(Collectors.toList());
+	}
 }
