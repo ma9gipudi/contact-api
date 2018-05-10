@@ -1,4 +1,4 @@
-package com.xyz.contactapi.dto.entity;
+package com.xyz.contactapi.entity;
 
 
 import java.util.List;

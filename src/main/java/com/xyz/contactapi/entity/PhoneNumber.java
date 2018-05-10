@@ -1,4 +1,4 @@
-package com.xyz.contactapi.dto.entity;
+package com.xyz.contactapi.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,27 +13,17 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name ="Address")
-public class Address {
-
+@Table(name = "phoneNumber")
+public class PhoneNumber {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name = "address_Id")
-	private Long addressId;
+	@Column(nullable = false)
+	Long phoneId;
 	
 	@Column
-	private String address1;
+	String work;
 	
 	@Column
-	private String address2;
-	
-	@Column
-	private String city;
-	
-	@Column
-	private String state;
-	
-	@Column
-	private String zip;
-	
+	String personal;
+
 }

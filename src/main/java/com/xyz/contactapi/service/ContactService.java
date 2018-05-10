@@ -5,8 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.xyz.contactapi.dto.ContactDTO;
-import com.xyz.contactapi.dto.entity.Contact;
-import org.springframework.stereotype.Service;
+import com.xyz.contactapi.entity.Contact;
 
 public interface ContactService {
 

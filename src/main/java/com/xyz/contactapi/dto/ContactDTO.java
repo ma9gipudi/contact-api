@@ -1,8 +1,8 @@
 package com.xyz.contactapi.dto;
 import java.sql.Date;
 
-import com.xyz.contactapi.dto.entity.Address;
-import com.xyz.contactapi.dto.entity.PhoneNumber;
+import com.xyz.contactapi.entity.Address;
+import com.xyz.contactapi.entity.PhoneNumber;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

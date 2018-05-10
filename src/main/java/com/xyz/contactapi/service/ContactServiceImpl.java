@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.xyz.contactapi.dto.ContactDTO;
-import com.xyz.contactapi.dto.entity.Contact;
-import com.xyz.contactapi.dto.entity.ContactRepository;
+import com.xyz.contactapi.entity.Contact;
+import com.xyz.contactapi.entity.ContactRepository;
 
 @Service
 public class ContactServiceImpl implements ContactService {
@@ -29,8 +29,7 @@ public class ContactServiceImpl implements ContactService {
 	
 	@Override
 	public Contact getContactById(Long id) {
-		Optional<Contact> optContact= repository.findById(id);
-		return optContact.isPresent() ? optContact.get() : null;
+		return repository.findById(id).orElseGet(null);
 	}
 
 	@Override
