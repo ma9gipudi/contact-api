@@ -53,20 +53,20 @@ public class ContactController {
         return new ResponseEntity<ContactDTO>(modelMapper.map(contact, ContactDTO.class),HttpStatus.OK);
     }
     
-    @GetMapping(value = "/contact")
-    public ResponseEntity<?> contactByParams(HttpServletRequest req) {
-    	
-    	Contact contact = null;
-    	T t= service.processFilters(req);
-    	
-    	
-        if(contact == null) {
-        	System.out.println("No contact found");
-        	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<ContactDTO>(modelMapper.map(contact, ContactDTO.class),HttpStatus.OK);
-    }
-    
+//    @GetMapping(value = "/contact")
+//    public ResponseEntity<?> contactByParams(HttpServletRequest req) {
+//
+//    	Contact contact = null;
+//    	T t= service.processFilters(req);
+//
+//
+//        if(contact == null) {
+//        	System.out.println("No contact found");
+//        	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//        return new ResponseEntity<ContactDTO>(modelMapper.map(contact, ContactDTO.class),HttpStatus.OK);
+//    }
+//
    /* @GetMapping(value = "/contact")
     public ResponseEntity<?> contactByPhoneNumber(@RequestParam(name = "phoneNumber") String phoneNumber) {
     	logger.info("phoneNumber - "+phoneNumber);
