@@ -1,6 +1,7 @@
 package com.xyz.contactapi;
 
-import java.util.Optional;
+import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,12 +18,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.xyz.contactapi.dto.ContactDTO;
 import com.xyz.contactapi.dto.entity.Contact;
-import com.xyz.contactapi.dto.entity.ContactRepository;
 import com.xyz.contactapi.service.ContactService;
 
 @RestController
@@ -31,8 +30,6 @@ public class ContactController {
 
 	Logger logger = LogManager.getLogger(ContactController.class);
 	
-    @Autowired
-    ContactRepository repository;
     
     @Autowired
     private ModelMapper modelMapper;
@@ -52,34 +49,22 @@ public class ContactController {
         }
         return new ResponseEntity<ContactDTO>(modelMapper.map(contact, ContactDTO.class),HttpStatus.OK);
     }
-    
-//    @GetMapping(value = "/contact")
-//    public ResponseEntity<?> contactByParams(HttpServletRequest req) {
-//
-//    	Contact contact = null;
-//    	T t= service.processFilters(req);
-//
-//
-//        if(contact == null) {
-//        	System.out.println("No contact found");
-//        	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//        return new ResponseEntity<ContactDTO>(modelMapper.map(contact, ContactDTO.class),HttpStatus.OK);
-//    }
-//
-   /* @GetMapping(value = "/contact")
-    public ResponseEntity<?> contactByPhoneNumber(@RequestParam(name = "phoneNumber") String phoneNumber) {
-    	logger.info("phoneNumber - "+phoneNumber);
-        Contact contact = repository.findByPhoneNumber(phoneNumber);
-        
-        if(contact == null) {
-        	System.out.println("No contact found with phoneNumber - "+phoneNumber);
-        	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<ContactDTO>(modelMapper.map(contact, ContactDTO.class),HttpStatus.OK);
-    }*/
 
    
+    @GetMapping(value = "/contact")
+    public ResponseEntity<?> contactByParams(HttpServletRequest req) {
+    	
+    	List<Contact> contactLst= service.processFilters(req);
+    	
+    	
+        if(contactLst == null || contactLst.size() ==0) {
+        	System.out.println("No contact found");
+        	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return contactLst.size() > 1 ? new ResponseEntity<List<Contact>>(contactLst,HttpStatus.OK)
+        		: new ResponseEntity<ContactDTO>(modelMapper.map(contactLst.get(0), ContactDTO.class),HttpStatus.OK);
+    }
+       
 
     @PostMapping(value ="/contact")
     public ResponseEntity<?> addContact(@RequestBody ContactDTO contactDTO) {
@@ -93,17 +78,20 @@ public class ContactController {
         return new ResponseEntity<ContactDTO>(modelMapper.map(contact, ContactDTO.class),HttpStatus.OK);
     }
     
-    @PutMapping(value ="/contact/{id}")
-    public ResponseEntity<?> updateContact(@PathVariable(name = "id") Long id, @RequestBody ContactDTO contactDTO) {
+    @PutMapping(value ="/contact/{id}/image")
+    public ResponseEntity<?> updateContact(@PathVariable(name = "id") Long id, @RequestBody MultipartFile image,
+    		HttpServletRequest req) throws IOException {
     	Contact updatedContact = null;
     	logger.info("id -"+id);
+    	if(image == null) {
+    		logger.info("Image is null");
+    		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    	}
         
-    	updatedContact = service.updateContact(id,contactDTO);
+    	updatedContact = service.getContactById(id);
+    	updatedContact.setImage(image.getBytes());
+    	service.saveContact(modelMapper.map(updatedContact, ContactDTO.class));
     	
-    	if(updatedContact == null) {
-        	System.out.println("No contact found");
-        	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<ContactDTO>(modelMapper.map(updatedContact, ContactDTO.class),HttpStatus.OK);
     }
     
@@ -118,18 +106,4 @@ public class ContactController {
         return new ModelMapper();
     }
     
-    
-    /*Condition<?, ?> isNotZero = new Condition<ContactDTO, Contact>() {
-        public boolean applies(MappingContext<ContactDTO, Contact> context) {
-          return context.getSource().getId() != null || context.getSource().getId() != 0;
-        }
-      };
-      
-	public void shouldMapConditionally() {
-    	    modelMapper.addMappings(new PropertyMap<ContactDTO, Contact>() {
-    	      protected void configure() {
-    	        when(isNotZero).map(source).setId(null);
-    	      }
-    	    });
-	}*/
 }

@@ -1,5 +1,7 @@
 package com.xyz.contactapi.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,9 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.xyz.contactapi.dto.ContactDTO;
@@ -35,10 +34,11 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
-	public <T> T processFilters(HttpServletRequest req) {
+	public List<Contact> processFilters(HttpServletRequest req) {
 
 		logger.info("ContactServiceImpl::processFilters - start");
 		String param = null;
+		List<Contact> contactLst= new ArrayList<>();
 		Contact contact = null;
 		while (req.getParameterNames().hasMoreElements()) {
 			param = req.getParameterNames().nextElement();
@@ -48,17 +48,18 @@ public class ContactServiceImpl implements ContactService {
 			return null;
 		}
 		if (param.equals("emailid")) {
-			contact = repository.findByEmail(req.getParameter(param));
+			contact = repository.findByEmail(req.getParameter(param).toLowerCase().trim());
+			contactLst.add(contact);
 		} else if (param.equals("phoneNumber")) {
-			contact = repository.findByPhoneNumber(req.getParameter(param));
-		} else if (param.equals("city")) {
-
-		} else if (param.equals("state")) {
-
+			contact = repository.findByPhoneNumber(req.getParameter(param).toLowerCase().trim());
+			contactLst.add(contact);
+		} else if (param.equals("city") || param.equals("state")) {
+			contactLst = repository.findByCityOrState(req.getParameter(param).toLowerCase().trim());
+			logger.info("contactLst.size - "+contactLst.size());
 		}
 
 		logger.info("ContactServiceImpl::processFilters - end");
-		return (T) contact;
+		return contactLst;
 	}
 
 	@Override

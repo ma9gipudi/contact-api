@@ -2,11 +2,11 @@ CREATE TABLE IF NOT EXISTS contact (
   id int NOT NULL AUTO_INCREMENT,
   name varchar(50) ,
   company varchar(100) ,
-  image blob,
   email varchar(50),
   birthdate Timestamp,
   phone_Id int,
   address_Id int,
+  image blob,
   PRIMARY KEY (id)
   );
 
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS Address (
   PRIMARY KEY (address_Id) 
 );
 
-insert into contact(name,company,image,email,birthdate) values('Test1','xyz company','000000000000000000','abc@gmail.com','2000-1-1');
+insert into contact(name,company,email,birthdate) values('Test1','xyz company','abc@gmail.com','2000-1-1');
 insert into contact(name) values('Test2');
 insert into phone_number (work,personal) values ('1111111111','2222222222');
 update contact set phone_id = 1 where id = 1;
