@@ -51,13 +51,14 @@ class ContactControllerTest {
 
         @Test
         public void testGetContact_byEmail() throws Exception{
-            List<Contact> contacts = List.of(Contact.builder().build(), Contact.builder().build());
+            List<Contact> contacts = List.of(Contact.builder().id(Long.valueOf(1234567)).build(), Contact.builder().build());
             when(contactService.processFilters(any()))
                     .thenReturn(contacts);
 
             mockMvc.perform(get("/contact?email=abc@123"))
                     .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(2)));
+            .andExpect(jsonPath("$", hasSize(2)))
+                    .andExpect(jsonPath("$[0].id", is(1234567)));
         }
     }
 }

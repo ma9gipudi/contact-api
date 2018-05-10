@@ -7,7 +7,6 @@ import com.xyz.contactapi.service.ContactService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -37,19 +37,11 @@ public class ContactController {
                 });
     }
 
-
     @GetMapping(value = "/contact")
-    public ResponseEntity<?> contactByParams(HttpServletRequest req) {
-
-        List<Contact> contactLst = service.processFilters(req);
-
-
-        if (contactLst == null || contactLst.size() == 0) {
-            System.out.println("No contact found");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return contactLst.size() > 1 ? new ResponseEntity<List<Contact>>(contactLst, HttpStatus.OK)
-                : new ResponseEntity<ContactDTO>(modelMapper.map(contactLst.get(0), ContactDTO.class), HttpStatus.OK);
+    public List<ContactDTO> contactByParams(HttpServletRequest req) {
+        return service.processFilters(req).stream()
+                .map(e -> modelMapper.map(e, ContactDTO.class))
+                .collect(Collectors.toList());
     }
 
 
@@ -87,10 +79,4 @@ public class ContactController {
         log.info("id - " + id);
         return service.deleteContact(id) ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
-
 }

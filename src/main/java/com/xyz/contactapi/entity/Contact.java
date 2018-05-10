@@ -61,5 +61,4 @@ public class Contact  implements Serializable{
     
     @Column
     private byte[] image;
-
 }
