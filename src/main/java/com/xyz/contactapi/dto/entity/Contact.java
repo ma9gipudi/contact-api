@@ -1,22 +1,42 @@
 package com.xyz.contactapi.dto.entity;
 
+import java.io.Serializable;
+import java.sql.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import lombok.Setter;
 
-import javax.persistence.*;
-import java.util.List;
-
-@Entity
-@Table(name = "contact")
+@Builder
+@Data
+@Getter
+@Setter
 @NoArgsConstructor
-public class Contact {
+@AllArgsConstructor
+@Entity()
+@Table(name = "contact")
+public class Contact  implements Serializable{
 
-    @Column(nullable = false)
+	private static final long serialVersionUID = 1L;
+
+	
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public Long id;
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Long id;
 
     @Column(name = "name")
     private String name;
@@ -24,5 +44,23 @@ public class Contact {
     @Column(name = "email")
     private String email;
 
+    
+    @Column
+    private String company;
+    
+/*    @Column
+    private Clob image;
+*/    
+    
+    @Column
+    private Date birthdate;
+    
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "phone_Id" )
+    private PhoneNumber phone;
+    
+    @OneToOne (cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_Id")
+    private Address address;
 
 }
