@@ -8,7 +8,6 @@ import com.xyz.contactapi.dto.ContactDTO;
 import com.xyz.contactapi.dto.entity.Contact;
 import org.springframework.stereotype.Service;
 
-@Service
 public interface ContactService {
 
 	public List<Contact> processFilters(HttpServletRequest req);

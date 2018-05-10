@@ -43,7 +43,7 @@ class ContactControllerTest {
         public void testGetContact_WhenAvailable() throws Exception {
             mockMvc.perform(get("/contact/1"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value(12345));
+                    .andExpect(jsonPath("$.id").value(12346));
         }
     }
 }

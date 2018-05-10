@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.xyz.contactapi.service.ContactServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.Parameter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +38,7 @@ public class ContactController {
     
     @Autowired
     private ContactService service;
+
 
     @GetMapping(value = "/contact/{id}")
     public ResponseEntity<?> getContact(@PathVariable(name = "id") Long id)  {
